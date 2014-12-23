@@ -11,7 +11,7 @@ import java.util.Properties;
 
 public class FileUtil {
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "resource" })
 	public static Map<String, String> readPropertyFile(String file,String charsetName) throws IOException {
 		if (charsetName==null || charsetName.trim().length()==0){
 			charsetName="gbk";

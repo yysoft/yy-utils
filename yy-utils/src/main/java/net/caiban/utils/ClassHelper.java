@@ -5,7 +5,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 public class ClassHelper {
-	@SuppressWarnings("resource")
 	public static Class<?> load(String jarpath, String className) throws ClassNotFoundException, MalformedURLException {
 		URL url = new URL("file:" + jarpath);
 		URLClassLoader myClassLoader = new URLClassLoader(new URL[] { url }, Thread.currentThread().getContextClassLoader());

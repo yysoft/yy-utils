@@ -1,7 +1,7 @@
 /**
  * 
  */
-package net.caiban.utils;
+package net.caiban.utils.http;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
