@@ -19,7 +19,7 @@ public class UploadResult implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	private String original;
-	private String rename;
+	private String rename; //also is result name
 	private String path;
 	
 	private String error;
@@ -31,7 +31,7 @@ public class UploadResult implements Serializable {
 	public UploadResult(String path, String original, String rename){
 		this.original = original;
 		this.path = path;
-		this.rename = path;
+		this.rename = rename;
 	}
 	
 	public String getOriginal() {
@@ -53,10 +53,14 @@ public class UploadResult implements Serializable {
 		this.path = path;
 	}
 	public String getFullPath() {
-		if(Strings.isNullOrEmpty(rename)){
+		if(!Strings.isNullOrEmpty(rename)){
 			return path+rename;
 		}
-		return path+original;
+		
+		if(!Strings.isNullOrEmpty(original)){
+			return path+original;
+		}
+		return null;
 	}
 
 	public String getError() {

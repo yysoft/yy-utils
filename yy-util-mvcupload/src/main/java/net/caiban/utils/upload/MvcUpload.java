@@ -48,11 +48,23 @@ public class MvcUpload {
 	}
 	
 	public static Map<String, UploadResult> batchLocalUpload(
+			HttpServletRequest request, String path, String rename){
+		return batchLocalUpload(request, path, rename, null);
+	}
+	
+	public static Map<String, UploadResult> batchLocalUpload(
 			HttpServletRequest request, String path,
 			AbstractUploadFilter filter){
 		return batchLocalUpload(request, path, null,filter);
 	}
 	
+	/**
+	 * @param request
+	 * @param path: The dist path of uploaded file.
+	 * @param rename: Set null if you wan't rename uploaded file, but it will add -{index} after the rename string.
+	 * @param filter
+	 * @return
+	 */
 	public static Map<String, UploadResult> batchLocalUpload(
 			HttpServletRequest request, String path, String rename,
 			AbstractUploadFilter filter){
@@ -62,9 +74,15 @@ public class MvcUpload {
 		Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
 		
 		Map<String, UploadResult> resultMap = Maps.newHashMap();
+		int i=0;
 		for(String inputFileName: fileMap.keySet()){
 			try {
-				UploadResult result = localUpload(fileMap.get(inputFileName), path, rename, filter);
+				String renamePlus = null;
+				if(!Strings.isNullOrEmpty(rename)){
+					renamePlus = rename+"-"+String.valueOf(i+1);
+					i++;
+				}
+				UploadResult result = localUpload(fileMap.get(inputFileName), path, renamePlus, filter);
 				resultMap.put(inputFileName, result);
 			} catch (IOException e) {
 				UploadResult result = new UploadResult();
@@ -90,6 +108,15 @@ public class MvcUpload {
 		return getMultipartFile(request, DEFAULT_INPUT);
 	}
 
+	/**
+	 * @param file: MultipartFile Object
+	 * @param path: The dist path of upload file.
+	 * @param rename: Set null if you wan't rename uploaded file.
+	 * @param filter: Upload filter by suffix
+	 * @return
+	 * @throws IOException
+	 * @throws UploadException
+	 */
 	public static UploadResult localUpload(MultipartFile file, String path,
 			String rename, AbstractUploadFilter filter) throws IOException, UploadException {
 		
@@ -107,7 +134,9 @@ public class MvcUpload {
 			if (!Strings.isNullOrEmpty(rename)) {
 				int start = originalName.lastIndexOf(".");
 				start = start == -1?0:start;
-				resultName = rename + "." + originalName.substring(start, originalName.length());
+				String suffix = originalName.substring(start, originalName.length());
+				suffix = suffix.startsWith(".")?suffix:"."+suffix;
+				resultName = rename + suffix;
 			}
 
 			if (!path.endsWith("/")) {
@@ -121,9 +150,9 @@ public class MvcUpload {
 				UploadResult result = new UploadResult(path, originalName, resultName);
 				return result;
 			} catch (IllegalStateException e) {
-				throw new RuntimeException("Error upload file, uploaded path is "+path+originalName, e);
+				throw new UploadException("Error upload file, uploaded path is "+path+originalName+" Error message: "+e.getMessage(), e);
 			} catch (IOException e) {
-				throw new UploadException("Error upload file, uploaded path is "+path+originalName, e);
+				throw new UploadException("Error upload file, uploaded path is "+path+originalName+" Error message: "+e.getMessage(), e);
 			}
 	}
 	
