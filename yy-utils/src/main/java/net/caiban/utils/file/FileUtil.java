@@ -9,6 +9,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+/**
+ * @author mays
+ *
+ */
+@Deprecated
 public class FileUtil {
 
 	@SuppressWarnings({ "rawtypes", "resource" })
