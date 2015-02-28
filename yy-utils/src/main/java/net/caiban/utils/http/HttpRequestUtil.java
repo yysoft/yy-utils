@@ -24,8 +24,11 @@ import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.log4j.Logger;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author parox
@@ -53,8 +56,6 @@ public class HttpRequestUtil {
 			
 			client = HttpClients.custom().setConnectionManager(cm).build();
 			
-			monitor = new IdleConnectionMonitorThread(cm);
-			monitor.start();
 		}
 		
 		return client;
@@ -177,8 +178,7 @@ public class HttpRequestUtil {
 				LOG.error("Error occurred when close http client. Message:"+e.getMessage(), e);
 			}
 		}
-		
-		monitor.shutdown();
+		shutdownMonitor();
 	}
 	
 	public static String httpResponseAsString(InputStream is, String encode)
@@ -204,6 +204,20 @@ public class HttpRequestUtil {
 		return out.toString();
 	}
 	
+	/**
+	 * connection monitor
+	 */
+	public static void monitor(){
+		monitor = new IdleConnectionMonitorThread(cm);
+		monitor.start();
+	}
+	
+	private static void shutdownMonitor(){
+		if(monitor != null){
+			monitor.shutdown();
+		}
+	}
+	
 	public static void main(String[] args) {
 		
 		for(int i = 0; i<100; i++){
@@ -211,7 +225,6 @@ public class HttpRequestUtil {
 			thread.start();
 		}
 		
-		System.out.println("CLOSE");
 	}
 	
 	static class VisitBaidu extends Thread {
