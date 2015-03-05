@@ -24,11 +24,8 @@ import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HttpContext;
 import org.apache.log4j.Logger;
-
-import com.google.common.collect.Lists;
 
 /**
  * @author parox
@@ -192,8 +189,14 @@ public class HttpRequestUtil {
 		try {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(
 					is, encode));
+			boolean firstline=true;
 			while ((line = reader.readLine()) != null) {
-				out.append(line).append("\n");
+				if(firstline){
+					out.append(line);
+					firstline=false;
+				}else{
+					out.append("\n").append(line);
+				}
 			}
 		} finally {
 			if (is != null) {
@@ -220,10 +223,14 @@ public class HttpRequestUtil {
 	
 	public static void main(String[] args) {
 		
-		for(int i = 0; i<100; i++){
-			Thread thread = new VisitBaidu();
-			thread.start();
-		}
+//		for(int i = 0; i<100; i++){
+//			Thread thread = new VisitBaidu();
+//			thread.start();
+//		}
+		
+//		String resp = HttpRequestUtil.httpGet("http://test.caiban.net:8080/auth/api/ssoUser.htm?a=mays&pc=16449732-13b0-48c2-8eef-6784ecf903bf&pd=123456");
+//		System.out.println(resp);
+//		System.out.println(HttpRequestUtil.httpGet("http://test.caiban.net:8080/auth/api/ssoUser.htm?a=mays&pc=16449732-13b0-48c2-8eef-6784ecf903bf&pd=123456"));
 		
 	}
 	
