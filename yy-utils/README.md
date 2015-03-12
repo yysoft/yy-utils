@@ -1,9 +1,21 @@
 # YY UTILS.
 
+> Maven support, only [oschina](http://maven.oschina.net)
+
+```xml
+<dependency>
+    <groupId>net.caiban</groupId>
+    <artifactId>yy-utils</artifactId>
+    <version>1.1.8</version>
+</dependency>
+```
+
 ## Utils List
 
 1. [MD5](#MD5)
 1. [HttpRequestUtil](#HttpRequestUtil)
+2. [JedisUtil](#JedisUtil)
+3. [MemcachedUtils](#MemcachedUtils)
 
 ### MD5
 
@@ -60,12 +72,60 @@ httpRequestUtil.monitor();
 HttpRequestUtil.shutdown();
 ```
 
-> Maven support, only [oschina](http://maven.oschina.net)
+### JedisUtil
 
-```xml
-<dependency>
-    <groupId>net.caiban</groupId>
-    <artifactId>yy-utils</artifactId>
-    <version>1.1.7</version>
-</dependency>
+Class: ``net.caiban.utils.cache.JedisUtil``
+
+Description:
+
+> Java redis client which use [Jedis](https://github.com/xetorthio/jedis) project.
+
+Example:
+
+```java
+Jedis jedis = null;
+try {
+	jedis = JedisUtil.getJedis();
+ 	Set<String> tags = jedis.keys("*");
+ 	jedis.set("key","value");
+ 	// Others of jedis action.
+} catch (Exception e) {
+	e.printStackTrace();
+}finally{
+	//It's necessary!
+	JedisUtil.getPool().returnResource(jedis);
+}
+```
+
+Startup:
+
+> Default redis server properties : ``redis.properties``, or you could init from other properties ( ``JedisUtil.initPool("config.properties")`` or ``JedisUtil.initPool("file:/path/to/config.properties")`` ) when system startup.
+
+Config Example:
+```properties
+redis.server=127.0.0.1
+redis.server.port=6379
+```
+
+### MemcachedUtils
+
+Class: ``net.caiban.utils.cache.MemcachedUtils``
+
+Description:
+
+> Java memcached client.
+
+Example:
+
+```java
+MemcachedUtils.getInstance().getClient().set("user",0,"user profile");
+```
+
+Startup:
+
+> Default memcached server properties : ``cache.properties``, you should init client ( ``MemcachedUtils.getInstance().init()`` or ``MemcachedUtils.getInstance().init("config.properties")`` or ``JedisUtil.initPool("file:/path/to/config.properties")`` ) when system startup.
+
+Config Example:
+```properties
+memcached.server=127.0.0.1:11211 localhost:11210
 ```
