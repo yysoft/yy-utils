@@ -21,11 +21,14 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.protocol.HttpContext;
 import org.apache.log4j.Logger;
+
+import com.google.common.base.Strings;
 
 /**
  * @author parox
@@ -134,13 +137,49 @@ public class HttpRequestUtil {
 		
 		return httpPostResponse(httpPost);
 	}
-
+	
 	public static String httpPost(String url){
 		return httpPost(url, null, Consts.UTF_8, DEFAULT_ENCODE);
 	}
 	
 	public static String httpPost(String url, List<NameValuePair> params){
 		return httpPost(url, params, Consts.UTF_8, DEFAULT_ENCODE);
+	}
+	
+	public static String httpPost(String url, String body){
+		return httpPost(url, body, DEFAULT_ENCODE);
+	}
+	
+	public static String httpPost(String url, String body, String readEncode){
+
+		HttpPost httpPost = new HttpPost(url);
+		
+		if(!Strings.isNullOrEmpty(body)){
+			StringEntity entity = new StringEntity(body, Consts.UTF_8);
+			httpPost.setEntity(entity);
+		}
+		
+		try {
+			CloseableHttpResponse response = httpPostResponse(httpPost);
+			try {
+				
+				HttpEntity entity = response.getEntity();
+				
+				if(entity!=null){
+					InputStream is = entity.getContent();
+					return httpResponseAsString(is, readEncode);
+				}
+				
+			} finally {
+				response.close();
+			}
+			
+		} catch (ClientProtocolException e) {
+			LOG.error("Error occurred when get url. Message:"+e.getMessage(), e);
+		} catch (IOException e) {
+			LOG.error("Error occurred when get url. Message:"+e.getMessage(), e);
+		}
+		return null;
 	}
 	
 	public static String httpPost(String url, List<NameValuePair> params, Charset postCharset, String readEncode){
