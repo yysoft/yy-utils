@@ -531,4 +531,10 @@ public class DateUtil {
 		}
 		return iMonth;
 	}
+	
+	public static Date getMondayFirstOfWeek(Date baseDate){
+		int dayofweek = getDayOfWeekForDate(baseDate);
+		dayofweek=dayofweek==1?dayofweek+7:dayofweek;
+		return getDateAfterDays(baseDate, 2-dayofweek);
+	}
 }
