@@ -20,10 +20,13 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 /**
+ * 
+ * Replaced by LocalUploader
  * @author mays (mays@caiban.net)
  * 
  *         created on 2014-12-22
  */
+@Deprecated
 public class MvcUpload {
 	
 	/**
