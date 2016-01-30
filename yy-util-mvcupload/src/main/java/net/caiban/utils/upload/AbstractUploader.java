@@ -37,6 +37,10 @@ public abstract class AbstractUploader {
 	public UploadResult upload(MultipartFile file, String path,
 			String rename, AbstractUploadFilter filter) throws UploadException, IOException {
 		
+		if(file==null){
+			throw new UploadException("MultipartFile unavailable.");
+		}
+		
 		String originalName = file.getOriginalFilename();
 
 		if (Strings.isNullOrEmpty(originalName)) {
@@ -98,14 +102,22 @@ public abstract class AbstractUploader {
 	
 	public MultipartFile getMultipartFile(HttpServletRequest request, String fileInputName){
 		MultipartRequest multipartRequest = (MultipartRequest) request;
-		MultipartFile file = multipartRequest.getFile(fileInputName);
-		return file;
+		if(Strings.isNullOrEmpty(fileInputName)){
+			Map<String, MultipartFile> map = multipartRequest.getFileMap();
+			for(String k: map.keySet()){
+				return map.get(k);
+			}
+			return null;
+		}else{
+			MultipartFile file = multipartRequest.getFile(fileInputName);
+			return file;
+		}
 	}
 	
 	public MultipartFile getMultipartFile(HttpServletRequest request){
-		if(Strings.isNullOrEmpty(inputName)){
-			return getMultipartFile(request, DEFAULT_INPUT);
-		}
+//		if(Strings.isNullOrEmpty(inputName)){
+//			return getMultipartFile(request, DEFAULT_INPUT);
+//		}
 		return getMultipartFile(request, inputName);
 	}
 	

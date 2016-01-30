@@ -4,7 +4,7 @@
 
 	<groupId>net.caiban</groupId>
 	<artifactId>yy-util-mvcupload</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.1</version>
 	<packaging>jar</packaging>
 
 	<name>yy-util-mvcupload</name>
